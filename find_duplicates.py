@@ -58,5 +58,5 @@ if __name__ == '__main__':
         ignore = sys.argv[1:]
     except IndexError:
         ingore = []
-    else:
-        main(ignore)
+
+    main(ignore)
