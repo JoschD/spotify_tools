@@ -37,9 +37,15 @@ search.
 
 ## Shuffle Functions
 ### Album Artist Shuffle
-Adds all of your saved albums into your queue (or if name is given to a playlist), 
-but shuffles by (first) artists, so that it plays an artist only again, 
+Adds all of your saved albums into your queue or if either a 
+playlist name or id is given, to a playlist.
+The songs are shuffled by (first-) artists, so that it plays an artist only again,
 after all other artists were played.
+
+If a playlist name is given the songs should be added to that playlist or
+if no playlist is found, a new one is created.
+The API seems to have some problems finding just recently created playlists,
+so it might create a new playlist. In that case use the playlist_id directly.
 
 Problem: Artists with more songs will dominate the end of the queue.
 

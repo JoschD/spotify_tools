@@ -1,6 +1,13 @@
 """
-Adds all of your saved albums into you queue, but shuffles by (first) artists,
-so that it plays an artist only again, after all other artists were played.
+Adds all of your saved albums into your queue or if either a
+playlist name or id is given, to a playlist.
+The songs are shuffled by (first-) artists, so that it plays an artist only again,
+after all other artists were played.
+
+If a playlist name is given the songs should be added to that playlist or
+if no playlist is found, a new one is created.
+The API seems to have some problems finding just recently created playlists,
+so it might create a new playlist. In that case use the playlist_id directly.
 
 A config.ini, containing username,  client_id, client_secret and
 redirect_uri needs to be present.
@@ -10,8 +17,10 @@ import time
 from collections import defaultdict
 import random
 
-from helper import get_client, log_setup, track_to_str, playlist_to_str, item_loop
+from spotipy.exceptions import SpotifyException
+from helper import get_client, log_setup, track_to_str, playlist_to_str, item_loop, find_playlist_by_name
 import logging
+
 
 LOG = logging.getLogger(__name__)
 
@@ -54,7 +63,11 @@ def shuffle_results(results):
 
 def add_results(sp, track_ids, playlist_name=None):
     if playlist_name:
-        playlist = find_playlist(sp, playlist_name)
+        try:
+            playlist = sp.playlist(playlist_name)
+        except SpotifyException:
+            playlist = find_playlist_by_name(sp, playlist_name)
+
         if not playlist:
             playlist = create_playlist(sp, playlist_name)
         add_tracks(sp, playlist, track_ids)
@@ -69,14 +82,6 @@ def add_tracks(sp, playlist, track_ids, n_at_once=20):
     for to_add in (track_ids[i:i+n_at_once] for i in range(0, len(track_ids), n_at_once)):
         sp.user_playlist_add_tracks(user, playlist['id'], to_add)
         time.sleep(.01)  # trying to avoid API-rate limits
-
-
-def find_playlist(sp, playlist_name):
-    playlists = sp.current_user_playlists()
-    for playlist in item_loop(sp, playlists):
-        if playlist_name == playlist['name']:
-            return playlist
-    return None
 
 
 def create_playlist(sp, playlist_name):

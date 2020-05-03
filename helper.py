@@ -33,6 +33,16 @@ def get_client(scope=None):
     return spotipy.Spotify(auth=token)
 
 
+def find_playlist_by_name(sp, playlist_name):
+    """ Looks for given name in user playlists and returns first found playlist """
+    playlists = sp.current_user_playlists()
+    for playlist in item_loop(sp, playlists):
+        if playlist_name == playlist['name']:
+            return playlist
+    return None
+
+
+
 def track_to_str(track):
     return (f"{track['name']} - "
             f"{', '.join(a['name'] for a in track['artists'])}")
