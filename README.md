@@ -7,8 +7,10 @@ that should have come with the GUI but didn't
 ## Functions
 ### User Playlist Search
 Find out if a certain song is in your playlists and if so, in which ones.
-Input is a part of the songs name or artist output are then all songs found
-in your playlist containing that part, including info in which playlist
+
+Input is a part of the songs name or artist. <br>
+Output are all songs found
+in your playlist containing that part, including the names of the playlists
 they are in.
 
 Usage:
