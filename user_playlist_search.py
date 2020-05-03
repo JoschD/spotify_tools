@@ -10,26 +10,23 @@ import logging
 import sys
 from collections import defaultdict
 
-from helper import get_username_and_client, log_setup, track_to_str, playlist_to_str
+from helper import get_client, log_setup, track_to_str, playlist_to_str, item_loop
 
 LOG = logging.getLogger(__name__)
 
 
 def main(to_find):
-    username, sp = get_username_and_client()
+    sp = get_client()
     results = defaultdict(list)
     to_find = to_find.lower()
-    playlists = sp.user_playlists(username)
-    for playlist in playlists['items']:
-        if playlist['owner']['id'] == username:
-            pl_content = sp.playlist(playlist['id'], fields="tracks,next")
-            tracks = pl_content['tracks']
-            loop_tracks(results, tracks, playlist, to_find)
-            while tracks['next']:
-                tracks = sp.next(tracks)
-                loop_tracks(results, tracks, playlist, to_find)
+    playlists = sp.current_user_playlists()
+    for playlist in item_loop(sp, playlists):
+        pl_content = sp.playlist(playlist['id'], fields="tracks,next")
+        for track in item_loop(sp, pl_content['tracks'], 'track'):
+            if find_in_track(track, to_find):
+                results[track_to_str(track)].append(playlist_to_str(playlist))
 
-        print_results(results, to_find)
+    print_results(results, to_find)
 
 
 def find_in_track(track, to_find):
@@ -39,13 +36,6 @@ def find_in_track(track, to_find):
         if to_find in artist['name'].lower():
             return True
     return False
-
-
-def loop_tracks(results, tracks, playlist, to_find):
-    for item in tracks['items']:
-        track = item['track']
-        if find_in_track(track, to_find):
-            results[track_to_str(track)].append(playlist_to_str(playlist))
 
 
 def print_results(results, to_find):
