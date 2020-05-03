@@ -1,10 +1,10 @@
-Spotify Advanced Search Scripts
+Spotify Scripts
 ===============================
 
-Some scripts to provide some advanced spotify search functionality, 
-that should have come with the GUI but didn't
+Some scripts to provide some advanced spotify functionality, 
+that should have come with the GUI but didn't.
 
-## Functions
+## Search Functions
 ### User Playlist Search
 Find out if a certain song is in your playlists and if so, in which ones.
 
@@ -35,6 +35,20 @@ python find_duplicates.py [PATTERN] [PATTERN] ...
 where `PATTERN` are regular expression patterns to exclude playlists from this
 search.
 
+## Shuffle Functions
+### Album Artist Shuffle
+Adds all of your saved albums into your queue (or if name is given to a playlist), 
+but shuffles by (first) artists, so that it plays an artist only again, 
+after all other artists were played.
+
+Problem: Artists with more songs will dominate the end of the queue.
+
+Usage:
+```
+python album_artist_shuffle [playlist]
+```
+
+
 ## Installation
 
 These scripts are based on the [spotipy](https://github.com/plamere/spotipy)
@@ -63,6 +77,10 @@ These steps are:
  - open your local copy of `config_example.ini`, 
  and fill in your spotify `username` as well as the `client_id` and `client_secret`
  from your just created app
+ _(depending on how you registered in spotify `username` might not what you
+  expect. You can figure it out by going to http://open.spotify.com and 
+   clicking on the top right on your name and then on "Profile". The part 
+   in the address now after `open.spotify.com/user/` should be your username/userid)_
  - rename `config_example.ini` to `config.ini` and have it in the folder you
  are running the scripts from
  
